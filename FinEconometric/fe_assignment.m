@@ -25,16 +25,19 @@ for n = 2:3
 end
 %% Question Two
 display('Question two');
-n = 2;
-Rm = n*annualdata([1:30],n+1)-(n-1)*annualdata([2:31],n);
-Sm = (n-1)*(annualdata([1:30],n+1)-annualdata([2:31],n))-annualdata([1:30],n+1)-annualdata([1:30],2);
+for n = 2:10
+Rm = annualdata([2:31],2)-(n-1)*annualdata([1:30],2);
+Sm = (annualdata([2:31],n+1) - annualdata([2:31],2))/(n-1);
 Mdl = varm(2,1);
 EstMdl = estimate(Mdl,[Rm Sm]);
 summarize(EstMdl);
 AR = cell2mat(EstMdl.AR);
 shock = [Rm(2:30) Sm(2:30)]'-EstMdl.Constant-AR*[Rm(1:29) Sm(1:29)]';
-out_Rm = decomp(Rm(2:30),shock(1,:)',shock(2,:)')
-out_Sm = decomp(Sm(2:30),shock(1,:)',shock(2,:)')
+out_Rm = decomp(Rm(2:30),shock(1,:)',shock(2,:)');
+out_Sm = decomp(Sm(2:30),shock(1,:)',shock(2,:)');
+fprintf('For %1.0f year bonds,in a VAR regression,the shock of Sm can explain %3.4f of ¦¤Rm in a variance decomposition, while the shock of ¦¤Rm can explain %3.4f of Sm in a variance decomposition.\n',...
+    n,out_Rm(2),out_Sm(1));
+end
 %% Question Three
 display('Question three');
 Beta3 = zeros(1,9);
